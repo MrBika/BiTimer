@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BiTimer</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1>BiTimer</h1>
+        <p>Timer minimaliste et rapide</p>
+      </header>
+
+      <section class="display" aria-live="polite">
+        <span id="minutes">15</span>
+        <span class="separator">:</span>
+        <span id="seconds">00</span>
+      </section>
+
+      <section class="controls">
+        <button id="startPause" class="btn btn-primary" aria-label="Démarrer ou mettre en pause">
+          ▶️ Start
+        </button>
+        <button id="reset" class="btn" aria-label="Réinitialiser">
+          🔁 Reset
+        </button>
+        <button id="addMinute" class="btn" aria-label="Ajouter une minute">
+          ➕ +1 min
+        </button>
+      </section>
+
+      <section class="settings">
+        <div class="setting-row">
+          <label for="defaultDuration">Durée par défaut (minutes)</label>
+          <input id="defaultDuration" type="number" min="1" max="180" step="1" />
+        </div>
+        <div class="setting-row">
+          <label for="soundEnabled">Son activé</label>
+          <input id="soundEnabled" type="checkbox" />
+        </div>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

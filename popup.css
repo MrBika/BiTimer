@@ -1,0 +1,130 @@
+:root {
+  color-scheme: light;
+  --violet: #6d4cff;
+  --violet-dark: #5633f0;
+  --background: #f7f6fb;
+  --text: #1d1b25;
+  --muted: #6a647a;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+}
+
+body {
+  width: 320px;
+  min-height: 420px;
+  background: var(--background);
+  color: var(--text);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.header h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.header p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 24px rgba(109, 76, 255, 0.12);
+  font-variant-numeric: tabular-nums;
+}
+
+.display span {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--violet);
+}
+
+.separator {
+  color: var(--muted);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: 0 6px 16px rgba(29, 27, 37, 0.08);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  grid-column: span 2;
+  background: var(--violet);
+  color: white;
+  border-radius: 999px;
+  font-size: 16px;
+  box-shadow: 0 10px 20px rgba(109, 76, 255, 0.3);
+}
+
+.btn-primary.is-paused {
+  background: var(--violet-dark);
+}
+
+.settings {
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+  box-shadow: 0 6px 16px rgba(29, 27, 37, 0.06);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.setting-row input[type="number"] {
+  width: 80px;
+  border: 1px solid #e6e3f2;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.setting-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--violet);
+}
