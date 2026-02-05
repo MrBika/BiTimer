@@ -95,6 +95,9 @@ input[type="range"]::-moz-range-thumb{
 
 /* main time digits */
 .time{
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-family: "Space Mono", "Courier New", monospace;
   font-weight:700;
   font-size:64px;
@@ -104,6 +107,7 @@ input[type="range"]::-moz-range-thumb{
   color:var(--text);
   margin:0;
   user-select:none;
+  white-space:nowrap;
 }
 
 /* colon spacing tweak */
