@@ -43,6 +43,11 @@ const updateStartButton = () => {
   }
 };
 
+const updateSoundRangeStyle = () => {
+  const percent = Math.round(state.soundVolume * 100);
+  elements.soundRange.style.background = `linear-gradient(90deg,var(--accent) 0%, var(--accent) ${percent}%, #e9e9ea ${percent}%, #e9e9ea 100%)`;
+};
+
 const syncStorage = async (updates) => {
   await chrome.storage.local.set(updates);
 };
@@ -97,6 +102,7 @@ const ensureDefaults = async () => {
   elements.defaultSeconds.value = defaultSeconds;
   elements.soundRange.value = Math.round(state.soundVolume * 100);
   elements.soundSelect.value = state.soundId;
+  updateSoundRangeStyle();
 
   updateDisplay(state.remainingSec);
   updateStartButton();
@@ -177,6 +183,7 @@ const handleSoundRange = async (event) => {
   state.soundVolume = Math.min(1, Math.max(0, value / 100));
   state.soundEnabled = state.soundVolume > 0;
   await syncStorage({ soundEnabled: state.soundEnabled, soundVolume: state.soundVolume });
+  updateSoundRangeStyle();
 };
 
 const handleSoundSelect = async (event) => {
@@ -236,6 +243,7 @@ const bindEvents = () => {
     if (changes.soundVolume) {
       state.soundVolume = changes.soundVolume.newValue;
       elements.soundRange.value = Math.round(state.soundVolume * 100);
+      updateSoundRangeStyle();
     }
   });
 };

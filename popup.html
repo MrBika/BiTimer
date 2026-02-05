@@ -8,7 +8,7 @@
   </head>
   <body>
     <main class="app">
-      <div class="container">
+      <div class="wrap">
         <section class="sound">
           <span class="icon" aria-hidden="true">🔊</span>
           <input id="soundRange" type="range" min="0" max="100" value="70" />
@@ -24,12 +24,11 @@
         </section>
 
         <section class="timer" aria-live="polite">
-          <span class="ghost">88:88</span>
-          <span class="time">
+          <div class="time">
             <span id="minutes">15</span>
-            <span class="separator">:</span>
+            <span class="separator colon">:</span>
             <span id="seconds">00</span>
-          </span>
+          </div>
         </section>
 
         <section class="controls">
