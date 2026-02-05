@@ -15,25 +15,30 @@ const ensureOffscreenDocument = async () => {
   });
 };
 
-const playSound = async () => {
+const playSound = async (soundId) => {
   await ensureOffscreenDocument();
-  chrome.runtime.sendMessage({ type: "play-sound" });
+  chrome.runtime.sendMessage({ type: "play-sound", soundId });
 };
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.get(["defaultDurationSec", "soundEnabled", "remainingSec"], (data) => {
-    const defaultDurationSec = data.defaultDurationSec ?? 15 * 60;
-    const soundEnabled = data.soundEnabled ?? true;
-    const remainingSec = data.remainingSec ?? defaultDurationSec;
+  chrome.storage.local.get(
+    ["defaultDurationSec", "soundEnabled", "remainingSec", "soundId"],
+    (data) => {
+      const defaultDurationSec = data.defaultDurationSec ?? 15 * 60;
+      const soundEnabled = data.soundEnabled ?? true;
+      const remainingSec = data.remainingSec ?? defaultDurationSec;
+      const soundId = data.soundId ?? "beep";
 
-    chrome.storage.local.set({
-      defaultDurationSec,
-      soundEnabled,
-      remainingSec,
-      running: false,
-      endTime: null,
-    });
-  });
+      chrome.storage.local.set({
+        defaultDurationSec,
+        soundEnabled,
+        soundId,
+        remainingSec,
+        running: false,
+        endTime: null,
+      });
+    }
+  );
 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -41,7 +46,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
 
-  const { soundEnabled } = await chrome.storage.local.get(["soundEnabled"]);
+  const { soundEnabled, soundId } = await chrome.storage.local.get(["soundEnabled", "soundId"]);
 
   await chrome.storage.local.set({
     running: false,
@@ -51,6 +56,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   });
 
   if (soundEnabled) {
-    await playSound();
+    await playSound(soundId);
   }
 });

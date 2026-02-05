@@ -8,10 +8,20 @@
   </head>
   <body>
     <main class="app">
-      <header class="header">
-        <h1>BiTimer</h1>
-        <p>Timer minimaliste et rapide</p>
-      </header>
+      <section class="top-bar">
+        <div class="sound-toggle">
+          <span class="icon" aria-hidden="true">🔈</span>
+          <label class="switch" for="soundEnabled">
+            <input id="soundEnabled" type="checkbox" />
+            <span class="slider" aria-hidden="true"></span>
+          </label>
+        </div>
+        <select id="soundSelect" aria-label="Choisir un son de notification">
+          <option value="beep">Beep</option>
+          <option value="bell">Bell</option>
+          <option value="chime">Chime</option>
+        </select>
+      </section>
 
       <section class="display" aria-live="polite">
         <span id="minutes">15</span>
@@ -19,27 +29,27 @@
         <span id="seconds">00</span>
       </section>
 
-      <section class="controls">
-        <button id="startPause" class="btn btn-primary" aria-label="Démarrer ou mettre en pause">
-          ▶️ Start
-        </button>
-        <button id="reset" class="btn" aria-label="Réinitialiser">
-          🔁 Reset
-        </button>
-        <button id="addMinute" class="btn" aria-label="Ajouter une minute">
-          ➕ +1 min
-        </button>
+      <section class="time-config" aria-label="Configurer la durée par défaut">
+        <div class="time-field">
+          <label for="defaultMinutes">Minutes</label>
+          <input id="defaultMinutes" type="number" min="0" max="180" step="1" />
+        </div>
+        <div class="time-field">
+          <label for="defaultSeconds">Secondes</label>
+          <input id="defaultSeconds" type="number" min="0" max="59" step="1" />
+        </div>
       </section>
 
-      <section class="settings">
-        <div class="setting-row">
-          <label for="defaultDuration">Durée par défaut (minutes)</label>
-          <input id="defaultDuration" type="number" min="1" max="180" step="1" />
-        </div>
-        <div class="setting-row">
-          <label for="soundEnabled">Son activé</label>
-          <input id="soundEnabled" type="checkbox" />
-        </div>
+      <section class="controls">
+        <button id="addMinute" class="btn btn-outline" aria-label="Ajouter une minute">
+          + 1 min
+        </button>
+        <button id="startPause" class="btn btn-primary" aria-label="Démarrer ou mettre en pause">
+          ▶️
+        </button>
+        <button id="reset" class="btn btn-outline" aria-label="Réinitialiser">
+          Reset
+        </button>
       </section>
     </main>
 

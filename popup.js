@@ -7,8 +7,10 @@ const elements = {
   startPause: document.getElementById("startPause"),
   reset: document.getElementById("reset"),
   addMinute: document.getElementById("addMinute"),
-  defaultDuration: document.getElementById("defaultDuration"),
+  defaultMinutes: document.getElementById("defaultMinutes"),
+  defaultSeconds: document.getElementById("defaultSeconds"),
   soundEnabled: document.getElementById("soundEnabled"),
+  soundSelect: document.getElementById("soundSelect"),
 };
 
 // État local synchronisé avec chrome.storage.
@@ -18,6 +20,7 @@ let state = {
   endTime: null,
   defaultDurationSec: DEFAULT_DURATION_SEC,
   soundEnabled: true,
+  soundId: "beep",
 };
 
 const formatNumber = (value) => String(value).padStart(2, "0");
@@ -31,10 +34,10 @@ const updateDisplay = (remainingSec) => {
 
 const updateStartButton = () => {
   if (state.running) {
-    elements.startPause.textContent = "⏸ Pause";
+    elements.startPause.textContent = "⏸";
     elements.startPause.classList.add("is-paused");
   } else {
-    elements.startPause.textContent = "▶️ Start";
+    elements.startPause.textContent = "▶️";
     elements.startPause.classList.remove("is-paused");
   }
 };
@@ -67,10 +70,12 @@ const ensureDefaults = async () => {
     "endTime",
     "defaultDurationSec",
     "soundEnabled",
+    "soundId",
   ]);
 
   state.defaultDurationSec = stored.defaultDurationSec ?? DEFAULT_DURATION_SEC;
   state.soundEnabled = stored.soundEnabled ?? true;
+  state.soundId = stored.soundId ?? "beep";
   state.running = stored.running ?? false;
   state.remainingSec = stored.remainingSec ?? state.defaultDurationSec;
   state.endTime = stored.endTime ?? null;
@@ -83,8 +88,12 @@ const ensureDefaults = async () => {
     }
   }
 
-  elements.defaultDuration.value = Math.round(state.defaultDurationSec / 60);
+  const defaultMinutes = Math.floor(state.defaultDurationSec / 60);
+  const defaultSeconds = state.defaultDurationSec % 60;
+  elements.defaultMinutes.value = defaultMinutes;
+  elements.defaultSeconds.value = defaultSeconds;
   elements.soundEnabled.checked = state.soundEnabled;
+  elements.soundSelect.value = state.soundId;
 
   updateDisplay(state.remainingSec);
   updateStartButton();
@@ -92,6 +101,7 @@ const ensureDefaults = async () => {
   await syncStorage({
     defaultDurationSec: state.defaultDurationSec,
     soundEnabled: state.soundEnabled,
+    soundId: state.soundId,
     running: state.running,
     remainingSec: state.remainingSec,
     endTime: state.endTime,
@@ -144,8 +154,12 @@ const addMinute = async () => {
 };
 
 const handleDefaultDurationChange = async (event) => {
-  const minutes = Math.max(1, Number(event.target.value || 1));
-  state.defaultDurationSec = minutes * 60;
+  const minutes = Math.max(0, Number(elements.defaultMinutes.value || 0));
+  const seconds = Math.min(59, Math.max(0, Number(elements.defaultSeconds.value || 0)));
+  const total = minutes * 60 + seconds;
+  state.defaultDurationSec = total > 0 ? total : 60;
+  elements.defaultMinutes.value = Math.floor(state.defaultDurationSec / 60);
+  elements.defaultSeconds.value = state.defaultDurationSec % 60;
   await syncStorage({ defaultDurationSec: state.defaultDurationSec });
   if (!state.running) {
     state.remainingSec = state.defaultDurationSec;
@@ -157,6 +171,11 @@ const handleDefaultDurationChange = async (event) => {
 const handleSoundToggle = async (event) => {
   state.soundEnabled = event.target.checked;
   await syncStorage({ soundEnabled: state.soundEnabled });
+};
+
+const handleSoundSelect = async (event) => {
+  state.soundId = event.target.value;
+  await syncStorage({ soundId: state.soundId });
 };
 
 // Rafraîchit l'affichage sans dépendre de l'interval Chrome.
@@ -185,8 +204,10 @@ const bindEvents = () => {
 
   elements.reset.addEventListener("click", resetTimer);
   elements.addMinute.addEventListener("click", addMinute);
-  elements.defaultDuration.addEventListener("change", handleDefaultDurationChange);
+  elements.defaultMinutes.addEventListener("change", handleDefaultDurationChange);
+  elements.defaultSeconds.addEventListener("change", handleDefaultDurationChange);
   elements.soundEnabled.addEventListener("change", handleSoundToggle);
+  elements.soundSelect.addEventListener("change", handleSoundSelect);
 
   // Synchronise l'UI si un autre contexte (service worker) modifie l'état.
   chrome.storage.onChanged.addListener((changes) => {
@@ -200,6 +221,10 @@ const bindEvents = () => {
     }
     if (changes.endTime) {
       state.endTime = changes.endTime.newValue;
+    }
+    if (changes.soundId) {
+      state.soundId = changes.soundId.newValue;
+      elements.soundSelect.value = state.soundId;
     }
   });
 };
