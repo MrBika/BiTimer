@@ -9,7 +9,7 @@ const elements = {
   addMinute: document.getElementById("addMinute"),
   defaultMinutes: document.getElementById("defaultMinutes"),
   defaultSeconds: document.getElementById("defaultSeconds"),
-  soundEnabled: document.getElementById("soundEnabled"),
+  soundRange: document.getElementById("soundRange"),
   soundSelect: document.getElementById("soundSelect"),
 };
 
@@ -20,6 +20,7 @@ let state = {
   endTime: null,
   defaultDurationSec: DEFAULT_DURATION_SEC,
   soundEnabled: true,
+  soundVolume: 0.7,
   soundId: "beep",
 };
 
@@ -37,7 +38,7 @@ const updateStartButton = () => {
     elements.startPause.textContent = "⏸";
     elements.startPause.classList.add("is-paused");
   } else {
-    elements.startPause.textContent = "▶️";
+    elements.startPause.textContent = "▶";
     elements.startPause.classList.remove("is-paused");
   }
 };
@@ -70,11 +71,13 @@ const ensureDefaults = async () => {
     "endTime",
     "defaultDurationSec",
     "soundEnabled",
+    "soundVolume",
     "soundId",
   ]);
 
   state.defaultDurationSec = stored.defaultDurationSec ?? DEFAULT_DURATION_SEC;
   state.soundEnabled = stored.soundEnabled ?? true;
+  state.soundVolume = stored.soundVolume ?? 0.7;
   state.soundId = stored.soundId ?? "beep";
   state.running = stored.running ?? false;
   state.remainingSec = stored.remainingSec ?? state.defaultDurationSec;
@@ -92,7 +95,7 @@ const ensureDefaults = async () => {
   const defaultSeconds = state.defaultDurationSec % 60;
   elements.defaultMinutes.value = defaultMinutes;
   elements.defaultSeconds.value = defaultSeconds;
-  elements.soundEnabled.checked = state.soundEnabled;
+  elements.soundRange.value = Math.round(state.soundVolume * 100);
   elements.soundSelect.value = state.soundId;
 
   updateDisplay(state.remainingSec);
@@ -101,6 +104,7 @@ const ensureDefaults = async () => {
   await syncStorage({
     defaultDurationSec: state.defaultDurationSec,
     soundEnabled: state.soundEnabled,
+    soundVolume: state.soundVolume,
     soundId: state.soundId,
     running: state.running,
     remainingSec: state.remainingSec,
@@ -168,9 +172,11 @@ const handleDefaultDurationChange = async (event) => {
   }
 };
 
-const handleSoundToggle = async (event) => {
-  state.soundEnabled = event.target.checked;
-  await syncStorage({ soundEnabled: state.soundEnabled });
+const handleSoundRange = async (event) => {
+  const value = Number(event.target.value || 0);
+  state.soundVolume = Math.min(1, Math.max(0, value / 100));
+  state.soundEnabled = state.soundVolume > 0;
+  await syncStorage({ soundEnabled: state.soundEnabled, soundVolume: state.soundVolume });
 };
 
 const handleSoundSelect = async (event) => {
@@ -206,7 +212,8 @@ const bindEvents = () => {
   elements.addMinute.addEventListener("click", addMinute);
   elements.defaultMinutes.addEventListener("change", handleDefaultDurationChange);
   elements.defaultSeconds.addEventListener("change", handleDefaultDurationChange);
-  elements.soundEnabled.addEventListener("change", handleSoundToggle);
+  elements.soundRange.addEventListener("input", handleSoundRange);
+  elements.soundRange.addEventListener("change", handleSoundRange);
   elements.soundSelect.addEventListener("change", handleSoundSelect);
 
   // Synchronise l'UI si un autre contexte (service worker) modifie l'état.
@@ -225,6 +232,10 @@ const bindEvents = () => {
     if (changes.soundId) {
       state.soundId = changes.soundId.newValue;
       elements.soundSelect.value = state.soundId;
+    }
+    if (changes.soundVolume) {
+      state.soundVolume = changes.soundVolume.newValue;
+      elements.soundRange.value = Math.round(state.soundVolume * 100);
     }
   });
 };

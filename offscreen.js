@@ -1,5 +1,5 @@
 // Génère un bip discret via Web Audio API.
-const playTone = (context, { frequency, duration, startAt }) => {
+const playTone = (context, { frequency, duration, startAt }, volume) => {
   const oscillator = context.createOscillator();
   const gain = context.createGain();
 
@@ -7,8 +7,9 @@ const playTone = (context, { frequency, duration, startAt }) => {
   oscillator.frequency.value = frequency;
 
   const startTime = context.currentTime + startAt;
+  const peak = 0.08 * volume;
   gain.gain.setValueAtTime(0.0001, startTime);
-  gain.gain.exponentialRampToValueAtTime(0.08, startTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), startTime + 0.02);
   gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
   oscillator.connect(gain);
@@ -18,7 +19,7 @@ const playTone = (context, { frequency, duration, startAt }) => {
   oscillator.stop(startTime + duration);
 };
 
-const playSound = (soundId) => {
+const playSound = (soundId, soundVolume = 0.7) => {
   const context = new AudioContext();
   const sequence = {
     beep: [{ frequency: 880, duration: 0.4, startAt: 0 }],
@@ -34,7 +35,8 @@ const playSound = (soundId) => {
   };
 
   const tones = sequence[soundId] ?? sequence.beep;
-  tones.forEach((tone) => playTone(context, tone));
+  const volume = Math.min(1, Math.max(0, soundVolume));
+  tones.forEach((tone) => playTone(context, tone, volume));
 
   const totalDuration = Math.max(...tones.map((tone) => tone.startAt + tone.duration));
   setTimeout(() => {
@@ -44,6 +46,6 @@ const playSound = (soundId) => {
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === "play-sound") {
-    playSound(message.soundId);
+    playSound(message.soundId, message.soundVolume);
   }
 });

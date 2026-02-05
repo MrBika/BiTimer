@@ -8,49 +8,53 @@
   </head>
   <body>
     <main class="app">
-      <section class="top-bar">
-        <div class="sound-toggle">
-          <span class="icon" aria-hidden="true">🔈</span>
-          <label class="switch" for="soundEnabled">
-            <input id="soundEnabled" type="checkbox" />
-            <span class="slider" aria-hidden="true"></span>
-          </label>
-        </div>
-        <select id="soundSelect" aria-label="Choisir un son de notification">
-          <option value="beep">Beep</option>
-          <option value="bell">Bell</option>
-          <option value="chime">Chime</option>
-        </select>
-      </section>
+      <div class="container">
+        <section class="sound">
+          <span class="icon" aria-hidden="true">🔊</span>
+          <input id="soundRange" type="range" min="0" max="100" value="70" />
+        </section>
 
-      <section class="display" aria-live="polite">
-        <span id="minutes">15</span>
-        <span class="separator">:</span>
-        <span id="seconds">00</span>
-      </section>
+        <section class="sound-select">
+          <label for="soundSelect">Son</label>
+          <select id="soundSelect" aria-label="Choisir un son de notification">
+            <option value="beep">Beep</option>
+            <option value="bell">Bell</option>
+            <option value="chime">Chime</option>
+          </select>
+        </section>
 
-      <section class="time-config" aria-label="Configurer la durée par défaut">
-        <div class="time-field">
-          <label for="defaultMinutes">Minutes</label>
-          <input id="defaultMinutes" type="number" min="0" max="180" step="1" />
-        </div>
-        <div class="time-field">
-          <label for="defaultSeconds">Secondes</label>
-          <input id="defaultSeconds" type="number" min="0" max="59" step="1" />
-        </div>
-      </section>
+        <section class="timer" aria-live="polite">
+          <span class="ghost">88:88</span>
+          <span class="time">
+            <span id="minutes">15</span>
+            <span class="separator">:</span>
+            <span id="seconds">00</span>
+          </span>
+        </section>
 
-      <section class="controls">
-        <button id="addMinute" class="btn btn-outline" aria-label="Ajouter une minute">
-          + 1 min
-        </button>
-        <button id="startPause" class="btn btn-primary" aria-label="Démarrer ou mettre en pause">
-          ▶️
-        </button>
-        <button id="reset" class="btn btn-outline" aria-label="Réinitialiser">
-          Reset
-        </button>
-      </section>
+        <section class="controls">
+          <button id="addMinute" class="add" aria-label="Ajouter une minute">
+            + 1 min
+          </button>
+          <button id="startPause" class="play" aria-label="Démarrer ou mettre en pause">
+            ▶
+          </button>
+        </section>
+
+        <section class="settings">
+          <div class="setting-group">
+            <label for="defaultMinutes">Minutes</label>
+            <input id="defaultMinutes" type="number" min="0" max="180" step="1" />
+          </div>
+          <div class="setting-group">
+            <label for="defaultSeconds">Secondes</label>
+            <input id="defaultSeconds" type="number" min="0" max="59" step="1" />
+          </div>
+          <button id="reset" class="reset" aria-label="Réinitialiser">
+            Reset
+          </button>
+        </section>
+      </div>
     </main>
 
     <script src="popup.js"></script>
