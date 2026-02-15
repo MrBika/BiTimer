@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "BiTimer",
+  "version": "1.0.0",
+  "description": "Timer minimaliste pour sessions UX/UI, exercices et focus.",
+  "action": {
+    "default_title": "BiTimer",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage", "alarms", "offscreen"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
